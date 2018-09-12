@@ -16,6 +16,7 @@ export interface InputMentionState {
         left: number,
         top: number
     };
+    savedSelectionEnd: number,
     searchText: string;
     showOptions: boolean;
     startsFrom: number;
@@ -23,6 +24,7 @@ export interface InputMentionState {
 }
 
 export class InputMention extends React.Component<InputMentionProps, InputMentionState> {
+    private refTextArea = React.createRef<HTMLTextAreaElement>();
 
     public constructor(props: InputMentionProps, state: InputMentionState) {
         super(props, state);
@@ -34,6 +36,7 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
         return (
             <div style={{position: "relative"}}>
                 <textarea 
+                    ref={this.refTextArea}
                     onKeyDown={this.onKeyDown}
                     onKeyUp={this.onKeyUp}
                     onChange={this.onTextChange}
@@ -45,18 +48,26 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
                     left: this.state.optionPosition.left + "px",
                     position: "absolute",
                     top: this.state.optionPosition.top + "px",
-                    width: "200px",
+                    width: "300px",
                 }}>
                     {
                         this.props.list
                             .map((item, key) => (
-                                <div key={key} style={{display: (this.filterCondition(item) ? "block" : "none") , backgroundColor: (key===this.state.currentOptionIndex?"blue":"inherit")}}>
+                                <div key={key} 
+                                    className="item"
+                                    style={{
+                                        backgroundColor: (key===this.state.currentOptionIndex?"blue":"inherit"),
+                                        display: (this.filterCondition(item) ? "block" : "none"),
+                                    }}
+                                    onClick={this.onItemClick(key)}
+                                >
                                 <img src={item.imageUrl} style={{
                                     borderRadius: "0.5em",
                                     height: "1em",
                                     width:"1em",
                                 }} />
                                 {item.text}
+                                <span style={{fontStyle: "italic", fontSize: "80%"}}>(@{item.mentionTag})</span>
                                 </div>
                             )
                         )
@@ -73,6 +84,7 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
                 left: 100,
                 top: 100
             },
+            savedSelectionEnd: 0,
             searchText: "",
             showOptions: false,
             startsFrom: 0,
@@ -85,6 +97,7 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
         this.onKeyDown = this.onKeyDown.bind(this);
         this.onKeyUp = this.onKeyUp.bind(this);
         this.filterCondition = this.filterCondition.bind(this);
+        this.onItemClick = this.onItemClick.bind(this);
     }
 
     private onTextChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -123,10 +136,23 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
                 startsFrom: event.target.selectionStart
             };
         }
+        stateChanges.savedSelectionEnd = event.target.selectionEnd;
 
         this.setState(stateChanges, () => {
             if (this.state.showOptions && !this.filterCondition(this.props.list[this.state.currentOptionIndex])) {
                 this.setState({ currentOptionIndex: this.getNextItemIndex(-1) });
+            }
+        });
+    }
+
+    private onItemClick(index: number) {
+        return ((event:any) => {
+            this.setState({ 
+                showOptions: false,
+                text: this.insertMentionToText({target: {selectionEnd: this.state.savedSelectionEnd}}, index)
+            });
+            if(this.refTextArea.current) {
+                this.refTextArea.current.focus();
             }
         });
     }
@@ -165,21 +191,21 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
     private handleEnter(event: any) {
         this.setState({ 
             showOptions: false,
-            text: this.insertMentionToText(event)
+            text: this.insertMentionToText(event, this.state.currentOptionIndex)
         });
         event.preventDefault();
     }
 
-    private insertMentionToText(event: any) {
+    private insertMentionToText(event: any, index: number) {
         return this.state.text.substring(0, this.state.startsFrom) +
-            this.getInsertableMention(event) +
+            this.getInsertableMention(event, index) +
             this.state.text.substr(event.target.selectionEnd) +
             " ";
     }
 
-    private getInsertableMention(event: any) {
+    private getInsertableMention(event: any, index: number) {
         return this.isFilteredListHasElements() ?
-            this.props.list[this.state.currentOptionIndex].mentionTag :
+            this.props.list[index].mentionTag :
             this.state.text.substring(this.state.startsFrom, event.target.selectionEnd);
     }
 
