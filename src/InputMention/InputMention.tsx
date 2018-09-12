@@ -34,7 +34,7 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
                 top: 100
             },
             searchText: "",
-            showOptions: false, // true,
+            showOptions: false,
             startsFrom: 0,
             text: "",
         };
@@ -66,7 +66,14 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
                     {
                         this.props.list
                             .map((item, key) => (
-                                <div key={key} style={{display: (this.filterCondition(item) ? "block" : "none") , backgroundColor: (key===this.state.currentOptionIndex?"blue":"inherit")}}>{item.text}</div>
+                                <div key={key} style={{display: (this.filterCondition(item) ? "block" : "none") , backgroundColor: (key===this.state.currentOptionIndex?"blue":"inherit")}}>
+                                <img src={item.imageUrl} style={{
+                                    borderRadius: "0.5em",
+                                    height: "1em",
+                                    width:"1em",
+                                }} />
+                                {item.text}
+                                </div>
                             )
                         )
                     }
