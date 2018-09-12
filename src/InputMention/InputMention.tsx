@@ -26,24 +26,8 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
 
     public constructor(props: InputMentionProps, state: InputMentionState) {
         super(props, state);
-
-        this.state = {
-            currentOptionIndex: 0,
-            optionPosition: {
-                left: 100,
-                top: 100
-            },
-            searchText: "",
-            showOptions: false,
-            startsFrom: 0,
-            text: "",
-        };
-
-        this.onTextChange = this.onTextChange.bind(this);
-        this.onKeyDown = this.onKeyDown.bind(this);
-        this.onKeyUp = this.onKeyUp.bind(this);
-        this.filterCondition = this.filterCondition.bind(this);
-        this.filterConditionText = this.filterConditionText.bind(this);
+        this.state = this.getInitState();
+        this.setThisBindings();
     }
 
     public render() {
@@ -82,6 +66,27 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
         );
     }
 
+    private getInitState(): Readonly<InputMentionState> {
+        return {
+            currentOptionIndex: 0,
+            optionPosition: {
+                left: 100,
+                top: 100
+            },
+            searchText: "",
+            showOptions: false,
+            startsFrom: 0,
+            text: "",
+        };
+    }
+
+    private setThisBindings(): void {
+        this.onTextChange = this.onTextChange.bind(this);
+        this.onKeyDown = this.onKeyDown.bind(this);
+        this.onKeyUp = this.onKeyUp.bind(this);
+        this.filterCondition = this.filterCondition.bind(this);
+    }
+
     private onTextChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
         this.setState({
             text: event.target.value
@@ -102,6 +107,30 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
         }
     }
 
+    private onKeyUp(event: any) {
+        let stateChanges:any = {};
+
+        if (this.state.showOptions) {
+            if(this.state.startsFrom > event.target.selectionStart) {
+                stateChanges.showOptions = false;
+            } else {
+                stateChanges.searchText = this.state.text.substring(this.state.startsFrom, event.target.selectionEnd+1);
+            }
+        } else if(this.isTriggeredByAt(event)) {
+            stateChanges = {
+                ...stateChanges,
+                showOptions: true,
+                startsFrom: event.target.selectionStart
+            };
+        }
+
+        this.setState(stateChanges, () => {
+            if (this.state.showOptions && !this.filterCondition(this.props.list[this.state.currentOptionIndex])) {
+                this.setState({ currentOptionIndex: this.getNextItemIndex(-1) });
+            }
+        });
+    }
+
     private isDown(event: any) {
         return event.which === 40;
     }
@@ -119,12 +148,12 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
     }
 
     private handleDown(event: any) {
-        this.setState((state) => ({ currentOptionIndex: this.next(state.currentOptionIndex) }));
+        this.setState((state) => ({ currentOptionIndex: this.getNextItemIndex(state.currentOptionIndex) }));
         event.preventDefault();
     }
 
     private handleUp(event: any) {
-        this.setState((state) => ({ currentOptionIndex: this.prev(state.currentOptionIndex) }));
+        this.setState((state) => ({ currentOptionIndex: this.getPrevItemIndex(state.currentOptionIndex) }));
         event.preventDefault();
     }
 
@@ -158,42 +187,12 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
         return this.props.list.filter(this.filterCondition).length > 0;
     }
 
-    /************/
-
     private filterCondition(item: InputMentionListItem): boolean {
-        return this.filterConditionText(item, this.state.searchText);
+        return item.text.toLocaleLowerCase().indexOf(this.state.searchText) !== -1;
     }
 
-    private filterConditionText(item: InputMentionListItem, searchText: string): boolean {
-        return item.text.toLocaleLowerCase().indexOf(searchText) !== -1;
-    }
-
-    private next(index: number): number {
-        if(this.props.list.filter(this.filterCondition).length === 0) { return 0; }
-
-        do {
-            index++;
-            if(index >= this.props.list.length) { index = 0;}
-        }
-        while (!this.filterCondition(this.props.list[index]));
-
-        return index;
-    }
-
-    private nextText(index: number, searchText: string): number {
-        if(this.props.list.filter(item => this.filterConditionText(item, searchText)).length === 0) { return 0; }
-
-        do {
-            index++;
-            if(index >= this.props.list.length) { index = 0;}
-        }
-        while (!this.filterConditionText(this.props.list[index], searchText));
-
-        return index;
-    }
-
-    private prev(index: number): number {
-        if(this.props.list.filter(this.filterCondition).length === 0) { return 0; }
+    private getPrevItemIndex(index: number): number {
+        if(!this.isFilteredListHasElements()) { return 0; }
 
         do {
             index--;
@@ -204,43 +203,21 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
         return index;
     }
 
-    private onKeyUp(event: any) {
-        const charAtSelection = this.state.text.substr(event.target.selectionStart-1,1);
-        const charBeforeSelection = event.target.selectionStart < 2 ? " " : this.state.text.substr(event.target.selectionStart-2,1) ;
-        let showOptions = this.state.showOptions;
-        
-        if(charAtSelection === "@" && charBeforeSelection === " ") {
-            this.setState({
-                showOptions: true,
-                startsFrom: event.target.selectionStart
-            });
-            showOptions = true;
-        }
+    private getNextItemIndex(index: number): number {
+        if(!this.isFilteredListHasElements()) { return 0; }
 
-        let searchText = this.state.searchText;
-        if(showOptions) {
-            this.setState({
-                searchText: this.state.text.substring(this.state.startsFrom, event.target.selectionEnd+1)
-            });
-            searchText = this.state.text.substring(this.state.startsFrom, event.target.selectionEnd+1);
-        
-            if(this.state.startsFrom > event.target.selectionStart) {
-                this.setState({
-                    showOptions: false
-                });
-                showOptions = false;
-            }
+        do {
+            index++;
+            if(index >= this.props.list.length) { index = 0;}
         }
+        while (!this.filterCondition(this.props.list[index]));
 
-        if(showOptions && !this.filterConditionText(this.props.list[this.state.currentOptionIndex], searchText)) {
-            
-            this.setState((state) => {
-                return {
-                    currentOptionIndex: this.nextText(-1, searchText)
-                };
-            });
-        }
+        return index;
     }
 
-    
+    private isTriggeredByAt(event: any) {
+        const charAtSelection = this.state.text.substr(event.target.selectionStart - 1, 1);
+        const charBeforeSelection = event.target.selectionStart < 2 ? " " : this.state.text.substr(event.target.selectionStart - 2, 1);
+        return charAtSelection === "@" && charBeforeSelection === " ";
+    }
 }
