@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as getCaretCoordinates from 'textarea-caret';
 
 export interface InputMentionListItem {
     mentionTag: string;
@@ -56,7 +57,7 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
                                 <div key={key} 
                                     className="item"
                                     style={{
-                                        backgroundColor: (key===this.state.currentOptionIndex?"blue":"inherit"),
+                                        backgroundColor: (key===this.state.currentOptionIndex?"blue":"white"),
                                         display: (this.filterCondition(item) ? "block" : "none"),
                                     }}
                                     onClick={this.onItemClick(key)}
@@ -130,8 +131,14 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
                 stateChanges.searchText = this.state.text.substring(this.state.startsFrom, event.target.selectionEnd+1);
             }
         } else if(this.isTriggeredByAt(event)) {
+            const coords = getCaretCoordinates(event.target, event.target.selectionEnd, {});
+
             stateChanges = {
                 ...stateChanges,
+                optionPosition: {
+                    left: coords.left,
+                    top: coords.top+20
+                },
                 showOptions: true,
                 startsFrom: event.target.selectionStart
             };
