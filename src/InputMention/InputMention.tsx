@@ -51,6 +51,7 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
                     top: this.state.optionPosition.top + "px",
                     width: "300px",
                 }}>
+                    <div style={{backgroundColor: "white"}}>Search: <span style={{backgroundColor: "#B784A7"}}>{this.state.searchText}</span></div>
                     {
                         this.props.list
                             .map((item, key) => (
@@ -221,7 +222,8 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
     }
 
     private filterCondition(item: InputMentionListItem): boolean {
-        return item.text.toLocaleLowerCase().indexOf(this.state.searchText) !== -1;
+        return item.text.toLocaleLowerCase().indexOf(this.state.searchText.toLocaleLowerCase()) !== -1
+            || item.mentionTag.toLocaleLowerCase().indexOf(this.state.searchText.toLocaleLowerCase()) !== -1;
     }
 
     private getPrevItemIndex(index: number): number {
