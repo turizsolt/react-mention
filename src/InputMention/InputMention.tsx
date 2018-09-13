@@ -41,6 +41,7 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
                     onKeyDown={this.onKeyDown}
                     onKeyUp={this.onKeyUp}
                     onChange={this.onTextChange}
+                    onClick={this.onTextClick}
                     value={this.state.text}
                 />
                 <div style={{
@@ -100,6 +101,7 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
         this.onKeyUp = this.onKeyUp.bind(this);
         this.filterCondition = this.filterCondition.bind(this);
         this.onItemClick = this.onItemClick.bind(this);
+        this.onTextClick = this.onTextClick.bind(this);
     }
 
     private onTextChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -128,6 +130,7 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
         if (this.state.showOptions) {
             if(this.state.startsFrom > event.target.selectionStart) {
                 stateChanges.showOptions = false;
+                stateChanges.searchText = "";
             } else {
                 stateChanges.searchText = this.state.text.substring(this.state.startsFrom, event.target.selectionEnd);
             }
@@ -151,6 +154,10 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
                 this.setState({ currentOptionIndex: this.getNextItemIndex(-1) });
             }
         });
+    }
+
+    private onTextClick(event: any) {
+        this.onKeyUp(event);
     }
 
     private onItemClick(index: number) {
@@ -192,7 +199,7 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
     }
 
     private handleEscape(event: any) {
-         this.setState({ showOptions: false });
+         this.setState({ showOptions: false, searchText: "" });
         event.preventDefault();
     }
 
@@ -200,6 +207,7 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
         const textarea = event.target;
         const insertLength = this.getInsertableMention(event, this.state.currentOptionIndex).length;
         this.setState({ 
+            searchText: "",
             showOptions: false,
             text: this.insertMentionToText(event, this.state.currentOptionIndex)
         }, () => {
