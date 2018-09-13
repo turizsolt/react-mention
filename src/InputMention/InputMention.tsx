@@ -197,18 +197,23 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
     }
 
     private handleEnter(event: any) {
+        const textarea = event.target;
+        const insertLength = this.getInsertableMention(event, this.state.currentOptionIndex).length;
         this.setState({ 
             showOptions: false,
             text: this.insertMentionToText(event, this.state.currentOptionIndex)
+        }, () => {
+            textarea.selectionStart = this.state.startsFrom + insertLength + 1;
+            textarea.selectionEnd = textarea.selectionStart;
         });
         event.preventDefault();
     }
 
     private insertMentionToText(event: any, index: number) {
         return this.state.text.substring(0, this.state.startsFrom) +
-            this.getInsertableMention(event, index) +
-            this.state.text.substr(event.target.selectionEnd) +
-            " ";
+            this.getInsertableMention(event, index) + 
+            " " +
+            this.state.text.substr(event.target.selectionEnd);
     }
 
     private getInsertableMention(event: any, index: number) {
