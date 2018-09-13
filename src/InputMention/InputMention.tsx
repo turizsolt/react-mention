@@ -129,7 +129,7 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
             if(this.state.startsFrom > event.target.selectionStart) {
                 stateChanges.showOptions = false;
             } else {
-                stateChanges.searchText = this.state.text.substring(this.state.startsFrom, event.target.selectionEnd+1);
+                stateChanges.searchText = this.state.text.substring(this.state.startsFrom, event.target.selectionEnd);
             }
         } else if(this.isTriggeredByAt(event)) {
             const coords = getCaretCoordinates(event.target, event.target.selectionEnd, {});
