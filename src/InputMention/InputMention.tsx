@@ -112,7 +112,9 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
             } else {
                 stateChanges.searchText = this.state.text.substring(this.state.startsFrom, event.target.selectionEnd);
             }
-        } else if(this.isTriggeredByAt(event)) {
+        }
+        
+        if(this.isTriggeredByAt(event)) {
             const coords = getCaretCoordinates(event.target, event.target.selectionEnd, {});
 
             stateChanges = {
@@ -252,6 +254,6 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
     private isTriggeredByAt(event: any) {
         const charAtSelection = this.state.text.substr(event.target.selectionStart - 1, 1);
         const charBeforeSelection = event.target.selectionStart < 2 ? " " : this.state.text.substr(event.target.selectionStart - 2, 1);
-        return charAtSelection === "@" && charBeforeSelection === " ";
+        return charAtSelection === "@" && charBeforeSelection.trim() === "";
     }
 }

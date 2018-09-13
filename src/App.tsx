@@ -16,7 +16,7 @@ const optionList:InputMentionListItem[] = [
 class App extends React.Component {
   public render() {
     return (
-      <InputMention list={optionList} />
+      <InputMention list={optionList} showSearchBar={true} />
     );
   }
 }
