@@ -1,29 +1,7 @@
 import * as React from 'react';
 import * as getCaretCoordinates from 'textarea-caret';
-
-export interface InputMentionListItem {
-    mentionTag: string;
-    text: string;
-    imageUrl?: string;
-}
-
-export interface InputMentionProps {
-    list: InputMentionListItem[];
-    showSearchBar?: boolean;
-}
-
-export interface InputMentionState {
-    currentOptionIndex: number;
-    optionPosition: {
-        left: number,
-        top: number
-    };
-    savedSelectionEnd: number,
-    searchText: string;
-    showOptions: boolean;
-    startsFrom: number;
-    text: string;
-}
+import { InputMentionListItem, InputMentionProps, InputMentionState } from './InputMentionInterfaces';
+import { styles } from './InputMentionStyles';
 
 export class InputMention extends React.Component<InputMentionProps, InputMentionState> {
     private refTextArea = React.createRef<HTMLTextAreaElement>();
@@ -36,7 +14,7 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
 
     public render() {
         return (
-            <div style={{position: "relative"}}>
+            <div className={styles.outerDiv}>
                 <textarea 
                     ref={this.refTextArea}
                     onKeyDown={this.onKeyDown}
@@ -45,40 +23,31 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
                     onClick={this.onTextClick}
                     value={this.state.text}
                 />
-                <div style={{
-                    border: "1px solid gray",
-                    boxShadow: "box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75)",
-                    display: this.state.showOptions ? "block" : "none",
-                    left: this.state.optionPosition.left + "px",
-                    position: "absolute",
-                    top: this.state.optionPosition.top + "px",
-                    width: "300px",
-                }}>
+                <div className={styles.optionsBox}
+                    style={{
+                        display: this.state.showOptions ? "block" : "none",
+                        left: this.state.optionPosition.left + "px",
+                        top: this.state.optionPosition.top + "px",
+                    }}
+                >
                     { this.props.showSearchBar &&
-                        <div style={{backgroundColor: "white"}}>Search: <span style={{backgroundColor: "#dedede"}}>{this.state.searchText}</span></div>
+                        <div className={styles.searchBar}>Search: <span className={styles.searchTerm}>{this.state.searchText}</span></div>
                     }
                     {
                         this.props.list
                             .map((item, key) => (
                                 <div key={key} 
-                                    className="item"
+                                    className={styles.optionItem}
                                     style={{
                                         backgroundColor: (key===this.state.currentOptionIndex?"#dedede":"white"),
                                         display: (this.filterCondition(item) ? "block" : "none"),
-                                        paddingRight: "0.2em"
                                     }}
                                     onClick={this.onItemClick(key)}
                                     onMouseEnter={this.onItemMouseEnter(key)}
                                 >
-                                <img src={item.imageUrl} style={{
-                                    borderRadius: "0.5em",
-                                    height: "1em",
-                                    marginLeft: "0.2em",
-                                    marginRight: "0.2em",
-                                    width:"1em",
-                                }} />
+                                <img src={item.imageUrl} className={styles.optionImage} />
                                 {item.text}
-                                <span style={{fontStyle: "italic", fontSize: "80%"}}>(@{item.mentionTag})</span>
+                                <span className={styles.optionMentionTag}>(@{item.mentionTag})</span>
                                 </div>
                             )
                         )

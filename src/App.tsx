@@ -1,7 +1,8 @@
 import * as React from 'react';
 import './App.css';
 
-import { InputMention, InputMentionListItem } from './InputMention/InputMention';
+import { InputMention } from './InputMention/InputMention';
+import { InputMentionListItem } from './InputMention/InputMentionInterfaces';
 
 const optionList:InputMentionListItem[] = [
   {mentionTag: "hucky", text: "Huckleberry Finn", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/5/56/Huckleberry-finn-with-rabbit.jpg"},
