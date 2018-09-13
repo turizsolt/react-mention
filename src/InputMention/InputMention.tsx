@@ -9,6 +9,7 @@ export interface InputMentionListItem {
 
 export interface InputMentionProps {
     list: InputMentionListItem[];
+    showSearchBar?: boolean;
 }
 
 export interface InputMentionState {
@@ -45,28 +46,34 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
                     value={this.state.text}
                 />
                 <div style={{
-                    border: "1px solid red",
+                    border: "1px solid gray",
+                    boxShadow: "box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.75)",
                     display: this.state.showOptions ? "block" : "none",
                     left: this.state.optionPosition.left + "px",
                     position: "absolute",
                     top: this.state.optionPosition.top + "px",
                     width: "300px",
                 }}>
-                    <div style={{backgroundColor: "white"}}>Search: <span style={{backgroundColor: "#B784A7"}}>{this.state.searchText}</span></div>
+                    { this.props.showSearchBar &&
+                        <div style={{backgroundColor: "white"}}>Search: <span style={{backgroundColor: "#dedede"}}>{this.state.searchText}</span></div>
+                    }
                     {
                         this.props.list
                             .map((item, key) => (
                                 <div key={key} 
                                     className="item"
                                     style={{
-                                        backgroundColor: (key===this.state.currentOptionIndex?"blue":"white"),
+                                        backgroundColor: (key===this.state.currentOptionIndex?"#dedede":"white"),
                                         display: (this.filterCondition(item) ? "block" : "none"),
+                                        paddingRight: "0.2em"
                                     }}
                                     onClick={this.onItemClick(key)}
                                 >
                                 <img src={item.imageUrl} style={{
                                     borderRadius: "0.5em",
                                     height: "1em",
+                                    marginLeft: "0.2em",
+                                    marginRight: "0.2em",
                                     width:"1em",
                                 }} />
                                 {item.text}
