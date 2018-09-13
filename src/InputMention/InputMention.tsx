@@ -68,6 +68,7 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
                                         paddingRight: "0.2em"
                                     }}
                                     onClick={this.onItemClick(key)}
+                                    onMouseEnter={this.onItemMouseEnter(key)}
                                 >
                                 <img src={item.imageUrl} style={{
                                     borderRadius: "0.5em",
@@ -108,6 +109,7 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
         this.onKeyUp = this.onKeyUp.bind(this);
         this.filterCondition = this.filterCondition.bind(this);
         this.onItemClick = this.onItemClick.bind(this);
+        this.onItemMouseEnter = this.onItemMouseEnter.bind(this);
         this.onTextClick = this.onTextClick.bind(this);
     }
 
@@ -176,6 +178,14 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
             if(this.refTextArea.current) {
                 this.refTextArea.current.focus();
             }
+        });
+    }
+
+    private onItemMouseEnter(index: number) {
+        return ((event:any) => {
+            this.setState({ 
+                currentOptionIndex: index
+            });
         });
     }
 
