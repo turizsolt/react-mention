@@ -35,13 +35,12 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
                     }
                     {
                         this.props.list
+                            .filter(this.filterCondition)
+                            .filter((item, key) => key < (this.props.maxSize || 10))
                             .map((item, key) => (
                                 <div key={key} 
                                     className={styles.optionItem}
-                                    style={{
-                                        backgroundColor: (key===this.state.currentOptionIndex?"#dedede":"white"),
-                                        display: (this.filterCondition(item) ? "block" : "none"),
-                                    }}
+                                    style={{ backgroundColor: (key===this.state.currentOptionIndex?"#dedede":"white") }}
                                     onClick={this.onItemClick(key)}
                                     onMouseEnter={this.onItemMouseEnter(key)}
                                 >

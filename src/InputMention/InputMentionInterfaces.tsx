@@ -1,4 +1,5 @@
 export interface InputMentionListItem {
+    id: number;
     mentionTag: string;
     text: string;
     imageUrl?: string;
@@ -7,6 +8,7 @@ export interface InputMentionListItem {
 export interface InputMentionProps {
     list: InputMentionListItem[];
     showSearchBar?: boolean;
+    maxSize?: number;
 }
 
 export interface InputMentionState {
