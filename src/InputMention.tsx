@@ -17,6 +17,7 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
             <div className={styles.outerDiv}>
                 <textarea 
                     placeholder={this.props.placeholder}
+                    onBlur={(event:any) => { if(this.props.onBlur) this.props.onBlur(event); }}
                     ref={this.refTextArea}
                     onKeyDown={this.onKeyDown}
                     onKeyUp={this.onKeyUp}
@@ -86,6 +87,8 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
         this.setState({
             text: event.target.value
         });
+
+        if(this.props.onChange) { this.props.onChange(event); }
     }
 
     private onKeyDown(event: any) {
@@ -203,6 +206,8 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
             textarea.selectionEnd = textarea.selectionStart;
         });
         event.preventDefault();
+
+        if(this.props.onChange) { this.props.onChange(event); }
     }
 
     private insertMentionToText(event: any, index: number) {

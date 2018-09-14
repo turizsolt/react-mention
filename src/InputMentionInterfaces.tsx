@@ -7,6 +7,8 @@ export interface InputMentionListItem {
 
 export interface InputMentionProps {
     list: InputMentionListItem[];
+    onBlur?: (event:any) => void;
+    onChange?: (event:any) => void;
     placeholder?: string;
     showSearchBar?: boolean;
     maxSize?: number;
