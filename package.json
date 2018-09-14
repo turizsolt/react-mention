@@ -1,18 +1,24 @@
 {
-  "name": "react-mention",
+  "author": "Zsolt Turi <turi.zsolt.m@gmail.com>",
+  "name": "react-mention-textarea",
   "version": "0.1.0",
-  "private": true,
+  "description": "A simple tool to create a textarea with mentioning possibility.",
   "dependencies": {
     "react": "^16.5.0",
     "react-dom": "^16.5.0",
     "react-scripts-ts": "2.17.0",
     "textarea-caret": "^3.1.0"
   },
+  "license": "MIT",
   "scripts": {
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/turizsolt/react-mention.git"
   },
   "devDependencies": {
     "@types/jest": "^23.3.2",
