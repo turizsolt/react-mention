@@ -106,7 +106,7 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
         let stateChanges:any = {};
 
         if (this.state.showOptions) {
-            if(this.state.startsFrom > event.target.selectionStart) {
+            if(this.state.startsFrom > event.target.selectionStart || this.state.text.substring(this.state.startsFrom, event.target.selectionEnd).match(/[\n\r\s]+/)) {
                 stateChanges.showOptions = false;
                 stateChanges.searchText = "";
             } else {
