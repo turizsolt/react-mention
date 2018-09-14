@@ -7,6 +7,7 @@ export interface InputMentionListItem {
 
 export interface InputMentionProps {
     list: InputMentionListItem[];
+    placeholder?: string;
     showSearchBar?: boolean;
     maxSize?: number;
 }

@@ -16,6 +16,7 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
         return (
             <div className={styles.outerDiv}>
                 <textarea 
+                    placeholder={this.props.placeholder}
                     ref={this.refTextArea}
                     onKeyDown={this.onKeyDown}
                     onKeyUp={this.onKeyUp}
