@@ -1,7 +1,7 @@
 import * as React from 'react';
-import * as getCaretCoordinates from 'textarea-caret';
 import { InputMentionListItem, InputMentionProps, InputMentionState } from './InputMentionInterfaces';
 import { styles } from './InputMentionStyles';
+const getCaretCoordinates = require('textarea-caret');
 
 export class InputMention extends React.Component<InputMentionProps, InputMentionState> {
     private refTextArea = React.createRef<HTMLTextAreaElement>();
