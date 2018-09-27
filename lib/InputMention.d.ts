@@ -6,6 +6,7 @@ export declare class InputMention extends React.Component<InputMentionProps, Inp
     render(): JSX.Element;
     private getInitState;
     private setThisBindings;
+    private setTextAreaRef;
     private onTextChange;
     private onKeyDown;
     private onKeyUp;

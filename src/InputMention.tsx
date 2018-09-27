@@ -4,7 +4,7 @@ import { styles } from './InputMentionStyles';
 const getCaretCoordinates = require('textarea-caret');
 
 export class InputMention extends React.Component<InputMentionProps, InputMentionState> {
-    private refTextArea = React.createRef<HTMLTextAreaElement>();
+    private refTextArea: any;
 
     public constructor(props: InputMentionProps, state: InputMentionState) {
         super(props, state);
@@ -12,13 +12,14 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
         this.setThisBindings();
     }
 
+    
     public render() {
         return (
             <div className={styles.outerDiv}>
                 <textarea 
                     placeholder={this.props.placeholder}
                     onBlur={(event:any) => { if(this.props.onBlur) this.props.onBlur(event); }}
-                    ref={this.refTextArea}
+                    ref={this.setTextAreaRef}
                     onKeyDown={this.onKeyDown}
                     onKeyUp={this.onKeyUp}
                     onChange={this.onTextChange}
@@ -81,6 +82,11 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
         this.onItemClick = this.onItemClick.bind(this);
         this.onItemMouseEnter = this.onItemMouseEnter.bind(this);
         this.onTextClick = this.onTextClick.bind(this);
+        this.setTextAreaRef = this.setTextAreaRef.bind(this);
+    }
+
+    private setTextAreaRef(element: any) {
+        this.refTextArea = element;
     }
 
     private onTextChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -149,8 +155,8 @@ export class InputMention extends React.Component<InputMentionProps, InputMentio
                 showOptions: false,
                 text: this.insertMentionToText({target: {selectionEnd: this.state.savedSelectionEnd}}, index)
             });
-            if(this.refTextArea.current) {
-                this.refTextArea.current.focus();
+            if(this.refTextArea) {
+                this.refTextArea.focus();
             }
         });
     }
